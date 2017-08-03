@@ -23,12 +23,18 @@ app.post('/contacts', function (req, res) {
   // add it to the in-memory array
   contacts.push(contactInfo);
 
-  console.log(contacts);
-  
   // tell the message sender that the contact has been added
   res.status(201).send(contactInfo);
 }); 
 
+app.get('/contacts/:id', function (req, res) {
+  for (var i=0;i<contacts.length;i++) {
+    if (contacts[i].id == Number(req.params.id)) {
+      return res.status(200).send(contacts[i]);
+    }
+  }
+  return res.status(404).send({ message: 'contact not found' });
+});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
