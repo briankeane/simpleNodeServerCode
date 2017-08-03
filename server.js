@@ -54,6 +54,10 @@ app.delete('/contacts/:id', function (req, res) {
     }
   }
   return res.status(404).send({ message: 'contact not found' });
+});
+
+app.get('/contacts', function (req, res) {
+  return res.status(200).send(contacts);
 })
 
 app.listen(3000, function () {
