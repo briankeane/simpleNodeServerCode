@@ -36,6 +36,26 @@ app.get('/contacts/:id', function (req, res) {
   return res.status(404).send({ message: 'contact not found' });
 });
 
+app.put('/contacts/:id', function (req, res) {
+  for (var i=0;i<contacts.length;i++) {
+    if (contacts[i].id == Number(req.params.id)) {
+      contacts[i] = Object.assign(contacts[i], req.body);
+      return res.status(200).send(contacts[i]);
+    }
+  }
+  return res.status(404).send({ message: 'contact not found'});
+});
+
+app.delete('/contacts/:id', function (req, res) {
+  for (var i=0;i<contacts.length;i++) {
+    if (contacts[i].id == Number(req.params.id)) {
+      contacts.splice(i,1);
+      return res.status(200).send({ message: 'contact deleted' });
+    }
+  }
+  return res.status(404).send({ message: 'contact not found' });
+})
+
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 });
