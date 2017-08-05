@@ -31,8 +31,13 @@ function ContactsHandler() {
     callback(null, results);
   };
 
-  this.findById = function (attrs, callback) {
-
+  this.findById = function (id, callback) {
+    for (var i=0;i<self.contacts.length;i++) {
+      if (self.contacts[i].id == id) {
+        return callback(null, self.contacts[i]);
+      }
+    }
+    return callback(null, null);
   };
 
   this.Create = function (attrs, callback) {
@@ -43,7 +48,13 @@ function ContactsHandler() {
   };
 
   this.remove = function (attrs, callback) {
-
+    for (var i=0;i<self.contacts.length;i++) {
+      if (self.contacts[i].id == attrs.id) {
+        self.contacts.splice(i,1);
+        return callback(null);
+      }
+    }
+    return callback(null);
   };
 }
 
