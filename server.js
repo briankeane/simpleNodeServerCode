@@ -2,92 +2,67 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express()
+const Contact = require('./contact.js');
 
 var contacts = [];
-var contactID = 1;
+var contactsID = 1;
 
 // middleware
 app.use(morgan('dev'));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.post('/contacts', function (req, res) {
-  // grab the posted info
-  var contactInfo = req.body;
-
-  // add an id
-  contactInfo.id = contactID;
-
-  // increment the id for the next time
-  contactID++;
-
-  // add it to the in-memory array
-  contacts.push(contactInfo);
-
-  // tell the message sender that the contact has been added
-  res.status(201).send(contactInfo);
+  Contact.Create(req.body, function (err, createdContact) {
+    res.status(201).send(createdContact);
+  });
 }); 
 
+app.get('/contacts/search', function (req, res) {
+  console.log('here');
+  Contact.find(req.query, function (err, results) {
+    return res.status(200).send({ results: results });
+  });
+});
+
 app.get('/contacts/:id', function (req, res) {
-  for (var i=0;i<contacts.length;i++) {
-    if (contacts[i].id == Number(req.params.id)) {
-      return res.status(200).send(contacts[i]);
+  Contact.findById(Number(req.params.id), function (err, foundContact) {
+    if (foundContact) {
+      return res.status(200).send(foundContact);
     }
-  }
-  return res.status(404).send({ message: 'contact not found' });
+    return res.status(404).send({ message: 'contact not found'});
+  });
 });
 
 app.put('/contacts/:id', function (req, res) {
-  for (var i=0;i<contacts.length;i++) {
-    if (contacts[i].id == Number(req.params.id)) {
-      contacts[i] = Object.assign(contacts[i], req.body);
-      return res.status(200).send(contacts[i]);
+  Contact.findById(Number(req.params.id), function (err, foundContact) {
+    if (foundContact) {
+      foundContact = Object.assign(foundContact, req.body);
+      return res.status(200).send(foundContact);
     }
-  }
-  return res.status(404).send({ message: 'contact not found'});
+    return res.status(404).send({ message: 'contact not found'});
+  });
 });
 
 app.delete('/contacts/:id', function (req, res) {
-  for (var i=0;i<contacts.length;i++) {
-    if (contacts[i].id == Number(req.params.id)) {
-      contacts.splice(i,1);
-      return res.status(200).send({ message: 'contact deleted' });
+  Contact.findById(Number(req.params.id), function (err, foundContact) {
+    if (!foundContact) {
+      return res.status(404).send({ message: 'contact not found' });
     }
-  }
-  return res.status(404).send({ message: 'contact not found' });
+    Contact.remove({ id: Number(req.params.id) }, function (err) {
+      return res.status(200).send({ message: 'contact deleted' });
+    });
+  });
 });
 
 app.get('/contacts', function (req, res) {
-  return res.status(200).send(contacts);
+  Contact.find({}, function (err, foundContacts) {
+    return res.status(200).send(foundContacts);
+  });
 });
 
-app.get('/search', function (req, res) {
-  var nameToMatch = req.query.name;
-  var emailToMatch = req.query.email;
-
-  var results = [];
-
-  for (var i=0;i<contacts.length;i++) {
-    var matchesName = true;
-    var matchesEmail = true;
-
-    // IF a name was provided and it doesn't match...
-    if (nameToMatch && (contacts[i].name != nameToMatch)) {
-      matchesName = false;
-    }
-
-    // IF an email was provided and it doesn't match
-    if (emailToMatch && (contacts[i].email != emailToMatch)) {
-      matchesEmail = false;
-    }
-
-    // IF it passed both tests, include it in the results
-    if (matchesName && matchesEmail) {
-      results.push(contacts[i]);
-    }
-  }
-  return res.status(200).send({ results: results });
-});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 });
+
+module.exports = app;
