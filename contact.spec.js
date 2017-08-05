@@ -6,6 +6,7 @@ describe('A Contact', function () {
     Contact.Create({ name: 'bob', email: 'bob@bob.com' }, function (err, createdContact) {
       expect(createdContact.name).to.equal('bob');
       expect(createdContact.email).to.equal('bob@bob.com');
+      expect(createdContact.id).to.exist;
       done();
     });
   });
