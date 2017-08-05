@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express()
-const Contact = require('./contact.js');
+const Contact = require('./contact/contact.js');
 
 var contacts = [];
 var contactsID = 1;
