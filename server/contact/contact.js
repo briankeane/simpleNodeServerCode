@@ -40,7 +40,7 @@ function ContactsHandler() {
     return callback(null, null);
   };
 
-  this.Create = function (attrs, callback) {
+  this.create = function (attrs, callback) {
     attrs.id = self.contactsID;
     self.contactsID++;
     this.contacts.push(attrs);
