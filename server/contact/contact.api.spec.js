@@ -2,38 +2,50 @@ const app = require('../server.js');
 const request = require('supertest');
 
 const expect = require('chai').expect;
-const Contact = require('./contact.js');
+const Contact = require('./contact.model.js');
 
 describe('/contacts', function () {
-  beforeEach(function () {
-    Contact.contacts = [
-                          {
-                            name: 'bob',
-                            email: 'bob@bob.com',
-                            id: 1
-                          },
-                          {
-                            name: 'sam',
-                            email: 'sam@sam.com',
-                            id: 2
-                          },
-                          {
-                            name: 'bill',
-                            email: 'bill@bill.com',
-                            id: 3
-                          },
-                          {
-                            name: 'bob',
-                            email: 'bob@bob.com',
-                            id: 4
-                          },
-                          {
-                            name: 'bill',
-                            email: 'bill@bill.com',
-                            id: 5
-                          }
-                        ];
-    Contact.contactsID = 6;
+  beforeEach(function (done) {
+    Contact.find({}).remove(function (err) {
+      done();
+    });
+  });
+
+  var savedContacts;
+  beforeEach(function (done) {
+    Contact.create({
+                     name: 'bob',
+                     email: 'bob@bob.com'
+                  }, function (err, savedContact0) {
+      Contact.create({
+                     name: 'sam',
+                     email: 'sam@sam.com'
+                  }, function (err, savedContact1) {
+        Contact.create({
+                     name: 'bill',
+                     email: 'bill@bill.com'
+                  }, function (err, savedContact2) {
+          Contact.create({
+                     name: 'bob',
+                     email: 'bob@bob.com'
+                  }, function (err, savedContact3) {
+            Contact.create({
+                     name: 'bill',
+                     email: 'bill@bill.com'
+                  }, function (err, savedContact4) {
+              savedContacts = [
+                                savedContact0,
+                                savedContact1,
+                                savedContact2,
+                                savedContact3,
+                                savedContact4
+                              ];
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
   describe('GET /contacts/:id', function () {
@@ -117,7 +129,7 @@ describe('/contacts', function () {
 
     it('modifies a contact', function (done) {
       request(app)
-        .put('/contacts/3')
+        .put(`/contacts/${savedContacts[2].id}`)
         .send({ email: 'newEmail@newEmail.com', name: 'newName' })
         .expect(200)
         .end(function(err, res){
@@ -129,13 +141,13 @@ describe('/contacts', function () {
             // check the response body
             expect(res.body.name).to.equal('newName');
             expect(res.body.email).to.equal('newEmail@newEmail.com');
-            expect(res.body.id).to.equal(3);
+            expect(res.body.id).to.equal(savedContacts[2].id);
             
             // now make sure it got changed on the server
-            Contact.findById(3, function (err, foundContact) {
+            Contact.findById(savedContacts[2].id, function (err, foundContact) {
               expect(foundContact.name).to.equal('newName');
               expect(foundContact.email).to.equal('newEmail@newEmail.com');
-              expect(foundContact.id).to.equal(3);
+              expect(foundContact.id).to.equal(savedContacts[2].id);
               done();
             });
           }
@@ -270,8 +282,8 @@ describe('/contacts', function () {
             var results = res.body.results;
             expect(results.length).to.equal(2);
             var ids = results.map((contact) => contact.id);
-            expect(ids).to.contain(1);
-            expect(ids).to.contain(4);
+            expect(ids).to.contain(savedContacts[0].id);
+            expect(ids).to.contain(savedContacts[3].id);
             done();
           }
         });
