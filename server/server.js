@@ -1,8 +1,18 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
+
+// Database Setup
+mongoose.connect('mongodb://localhost:27017/contactMgr-dev', { useMongoClient: true }, function (err) {
+  console.log('connected');
+});
+mongoose.connection.on('error', function(err) {
+  console.error(`MongoDB connection error: ${err}`);
+  process.exit(-1); // eslint-disable-line no-process-exit
+});
 
 // middleware
 app.use(morgan('dev'));
