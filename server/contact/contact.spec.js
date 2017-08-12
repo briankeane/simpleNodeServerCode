@@ -1,9 +1,10 @@
 const expect = require('chai').expect;
 const Contact = require('./contact.model.js');
+const SpecHelper = require('../utilities/specHelper.js');
 
 describe('A Contact', function () {
   beforeEach(function (done) {
-    Contact.find({}).remove(function (err) {
+    SpecHelper.clearDatabase(function (err) {
       done();
     });
   });

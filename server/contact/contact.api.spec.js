@@ -4,10 +4,11 @@ const request = require('supertest');
 const expect = require('chai').expect;
 const Contact = require('./contact.model.js');
 const mongoose = require('mongoose');
+const SpecHelper = require('../utilities/specHelper.js');
 
 describe('/contacts', function () {
   beforeEach(function (done) {
-    Contact.find({}).remove(function (err) {
+    SpecHelper.clearDatabase(function (err) {
       done();
     });
   });
@@ -330,7 +331,7 @@ describe('/contacts', function () {
             done();
           }
         });
-    })
+    });
   });
 });
   
