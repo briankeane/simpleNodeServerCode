@@ -67,7 +67,7 @@ module.exports.delete = function (req, res) {
     if (!foundContact) {
       return res.status(404).send({ message: 'contact not found' });
     }
-    Contact.remove({ id: req.params.id }, function (err) {
+    Contact.remove({ _id: req.params.id }, function (err) {
       if (err) {
         console.log(err);
         return res.status(500).send(err);

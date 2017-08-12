@@ -3,6 +3,7 @@ const request = require('supertest');
 
 const expect = require('chai').expect;
 const Contact = require('./contact.model.js');
+const mongoose = require('mongoose');
 
 describe('/contacts', function () {
   beforeEach(function (done) {
@@ -51,7 +52,7 @@ describe('/contacts', function () {
   describe('GET /contacts/:id', function () {
     it ('GETs a contact if it exists', function (done) {
       request(app)
-        .get('/contacts/3')
+        .get(`/contacts/${savedContacts[2].id}`)
         .expect(200)
         .end(function(err, res){
           if(err) {
@@ -61,7 +62,7 @@ describe('/contacts', function () {
           } else {
             expect(res.body.name).to.equal('bill');
             expect(res.body.email).to.equal('bill@bill.com');
-            expect(res.body.id).to.equal(3);
+            expect(res.body.id).to.equal(savedContacts[2].id);
             done();
           }
         });
@@ -69,7 +70,7 @@ describe('/contacts', function () {
 
     it('returns 404 if id not found', function (done) {
       request(app)
-        .get('/contacts/999')
+        .get(`/contacts/${mongoose.Types.ObjectId()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {
@@ -103,8 +104,10 @@ describe('/contacts', function () {
               expect(foundContact.name).to.equal('sue');
               expect(foundContact.email).to.equal('sue@sue.com');
               expect(foundContact.id).to.equal(res.body.id);
-              expect(Contact.contacts.length).to.equal(6);
-              done();
+              Contact.find({}, function (err, allContacts) {
+                expect(allContacts.length).to.equal(6);
+                done();
+              });
             });
           }
         });
@@ -114,7 +117,7 @@ describe('/contacts', function () {
   describe('PUT /contacts/:id', function () {
     it ('returns 404 if the provided id does not exist', function (done) {
       request(app)
-        .put('/contacts/999')
+        .put(`/contacts/${mongoose.Types.ObjectId()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {
@@ -158,7 +161,7 @@ describe('/contacts', function () {
   describe('DELETE /contacts/:id', function () {
     it ('returns 404 if the provided id does not exist', function (done) {
       request(app)
-        .delete('/contacts/999')
+        .delete(`/contacts/${mongoose.Types.ObjectId()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {
@@ -173,7 +176,7 @@ describe('/contacts', function () {
     
     it ('deletes a contact', function (done) {
       request(app)
-        .delete('/contacts/3')
+        .delete(`/contacts/${savedContacts[2].id}`)
         .expect(200)
         .end(function(err, res){
           if(err) {
@@ -182,10 +185,12 @@ describe('/contacts', function () {
             done(err);
           } else {
             // check the response body
-            expect(Contact.contacts.length).to.equal(4);
-            var ids = Contact.contacts.map((contact) => contact.id);
-            expect(ids).to.not.contain(3);
-            done();
+            Contact.find({}, function (err, allContacts) {
+              expect(allContacts.length).to.equal(4);
+              var ids = allContacts.map((contact) => contact.id);
+              expect(ids).to.not.contain(savedContacts[2].id);
+              done();
+            });
           }            
         });
     });
@@ -214,11 +219,11 @@ describe('/contacts', function () {
 
             // now make sure it got them all with no duplicates
             var ids = results.map((result) => result.id);
-            expect(ids).to.contain(1);
-            expect(ids).to.contain(2);
-            expect(ids).to.contain(3);
-            expect(ids).to.contain(4);
-            expect(ids).to.contain(5);
+            expect(ids).to.contain(savedContacts[0].id);
+            expect(ids).to.contain(savedContacts[1].id);
+            expect(ids).to.contain(savedContacts[2].id);
+            expect(ids).to.contain(savedContacts[3].id);
+            expect(ids).to.contain(savedContacts[4].id);
             done();
           }
         });
@@ -240,8 +245,8 @@ describe('/contacts', function () {
             var results = res.body.results;
             expect(results.length).to.equal(2);
             var ids = results.map((contact) => contact.id);
-            expect(ids).to.contain(1);
-            expect(ids).to.contain(4);
+            expect(ids).to.contain(savedContacts[0].id);
+            expect(ids).to.contain(savedContacts[3].id);
             done();
           }
       });
@@ -260,7 +265,7 @@ describe('/contacts', function () {
           } else {
             var results = res.body.results;
             expect(results.length).to.equal(1);
-            expect(results[0].id).to.equal(2);
+            expect(results[0].id).to.equal(savedContacts[1].id);
             done();
           }
         });
@@ -278,7 +283,6 @@ describe('/contacts', function () {
             console.log(err);
             done(err);
           } else {
-            console.log(res.body);
             var results = res.body.results;
             expect(results.length).to.equal(2);
             var ids = results.map((contact) => contact.id);
@@ -302,7 +306,7 @@ describe('/contacts', function () {
           } else {
             var results = res.body.results;
             expect(results.length).to.equal(1);
-            expect(results[0].id).to.equal(2);
+            expect(results[0].id).to.equal(savedContacts[1].id);
             done();
           }
         });
