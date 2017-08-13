@@ -65,7 +65,7 @@ describe('/contacts', function () {
 
     it('returns 404 if id not found', function (done) {
       request(app)
-        .get('/contacts/999')
+        .get(`/contacts/${Contact.generateID()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {
@@ -112,7 +112,7 @@ describe('/contacts', function () {
   describe('PUT /contacts/:id', function () {
     it ('returns 404 if the provided id does not exist', function (done) {
       request(app)
-        .put('/contacts/999')
+        .put(`/contacts/${Contact.generateID()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {
@@ -156,7 +156,7 @@ describe('/contacts', function () {
   describe('DELETE /contacts/:id', function () {
     it ('returns 404 if the provided id does not exist', function (done) {
       request(app)
-        .delete('/contacts/999')
+        .delete(`/contacts/${Contact.generateID()}`)
         .expect(404)
         .end(function(err, res){
           if(err) {

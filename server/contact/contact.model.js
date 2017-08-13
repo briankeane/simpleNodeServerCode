@@ -27,5 +27,9 @@ ContactSchema.statics.clearAll = function (callback) {
   });
 };
 
+ContactSchema.statics.generateID  = function () {
+  return mongoose.Types.ObjectId();
+}
+
 const Contact = mongoose.model('Contact', ContactSchema);
 module.exports = Contact;
