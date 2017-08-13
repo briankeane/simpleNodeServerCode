@@ -2,18 +2,30 @@ const Contact = require('./contact.model.js');
 
 module.exports.create = function (req, res) {
   Contact.create(req.body, function (err, createdContact) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
     res.status(201).send(createdContact);
   });
 };
 
 module.exports.search = function (req, res) {
   Contact.find(req.query, function (err, results) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
     return res.status(200).send({ results: results });
   });
 };
 
 module.exports.show = function (req, res) {
-  Contact.findById(Number(req.params.id), function (err, foundContact) {
+  Contact.findById(req.params.id, function (err, foundContact) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
     if (foundContact) {
       return res.status(200).send(foundContact);
     }
@@ -22,7 +34,11 @@ module.exports.show = function (req, res) {
 };
 
 module.exports.modify = function (req, res) {
-  Contact.findById(Number(req.params.id), function (err, foundContact) {
+  Contact.findById(req.params.id, function (err, foundContact) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
     if (foundContact) {
       foundContact = Object.assign(foundContact, req.body);
       return res.status(200).send(foundContact);
@@ -32,11 +48,19 @@ module.exports.modify = function (req, res) {
 };
 
 module.exports.delete = function (req, res) {
-  Contact.findById(Number(req.params.id), function (err, foundContact) {
+  Contact.findById(req.params.id, function (err, foundContact) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
     if (!foundContact) {
       return res.status(404).send({ message: 'contact not found' });
     }
-    Contact.remove({ id: Number(req.params.id) }, function (err) {
+    Contact.remove({ id: req.params.id }, function (err) {
+      if (err) {
+        console.log(err);
+        return res.status(500).send(err);
+      }
       return res.status(200).send({ message: 'contact deleted' });
     });
   });

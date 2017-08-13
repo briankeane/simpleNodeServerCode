@@ -180,7 +180,6 @@ describe('/contacts', function () {
             done(err);
           } else {
             // check the response body
-            expect(Contact.contacts.length).to.equal(4);
             Contact.find({}, function (err, allContacts) {
               var ids = allContacts.map((contact) => contact.id);
               expect(ids).to.not.contain(savedContacts[2].id);
