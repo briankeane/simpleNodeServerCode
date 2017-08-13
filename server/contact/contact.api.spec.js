@@ -2,7 +2,7 @@ const app = require('../server.js');
 const request = require('supertest');
 
 const expect = require('chai').expect;
-const Contact = require('./contact.js');
+const Contact = require('./contact.model.js');
 
 describe('/contacts', function () {
   var savedContacts;

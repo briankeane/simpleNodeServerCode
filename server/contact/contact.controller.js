@@ -1,4 +1,4 @@
-const Contact = require('./contact.js');
+const Contact = require('./contact.model.js');
 
 module.exports.create = function (req, res) {
   Contact.create(req.body, function (err, createdContact) {

@@ -4,6 +4,16 @@ const Schema = mongoose.Schema;
 var ContactSchema = new Schema({
   name:                 { type: String },
   email:                { type: String },
+}, {
+  toJSON: {
+    transform: function (doc, ret) {
+      return {
+        id: ret._id,
+        email: ret.email,
+        name: ret.name
+      };
+    }
+  }
 });
 
 ContactSchema.statics.clearAll = function (callback) {
