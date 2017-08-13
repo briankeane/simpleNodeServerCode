@@ -40,10 +40,21 @@ module.exports.modify = function (req, res) {
       return res.status(500).send(err);
     }
     if (foundContact) {
-      foundContact = Object.assign(foundContact, req.body);
-      return res.status(200).send(foundContact);
+      for (var propertyName in req.body) {
+        if (req.body.hasOwnProperty(propertyName)) {
+          foundContact[propertyName] = req.body[propertyName];
+        }
+      }
+      foundContact.save(function (err, savedContact) {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        return res.status(200).send(savedContact);
+      });
+    } else {
+      return res.status(404).send({ message: 'contact not found'});
     }
-    return res.status(404).send({ message: 'contact not found'});
   });
 };
 
