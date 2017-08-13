@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const Contact = require('./contact.js');
+const Contact = require('./contact.model.js');
 
 describe('A Contact', function () {
   it('creates a contact', function (done) {
