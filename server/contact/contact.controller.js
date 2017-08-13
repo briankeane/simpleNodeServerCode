@@ -1,7 +1,7 @@
 const Contact = require('./contact.js');
 
 module.exports.create = function (req, res) {
-  Contact.Create(req.body, function (err, createdContact) {
+  Contact.create(req.body, function (err, createdContact) {
     res.status(201).send(createdContact);
   });
 };

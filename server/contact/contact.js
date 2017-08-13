@@ -40,7 +40,7 @@ function ContactsHandler() {
     return callback(null, null);
   };
 
-  this.Create = function (attrs, callback) {
+  this.create = function (attrs, callback) {
     attrs.id = self.contactsID;
     self.contactsID++;
     this.contacts.push(attrs);
@@ -55,6 +55,12 @@ function ContactsHandler() {
       }
     }
     return callback(null);
+  };
+
+  this.clearAll = function (callback) {
+    self.contacts = [];
+    self.contactsID = 1;
+    callback(null);
   };
 }
 
