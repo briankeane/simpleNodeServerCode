@@ -15,7 +15,7 @@ ContactSchema.statics.clearAll = function (callback) {
       callback(null);
     }
   });
-}
+};
 
 const Contact = mongoose.model('Contact', ContactSchema);
 module.exports = Contact;

@@ -89,13 +89,13 @@ describe('A Contact', function () {
     });
 
     it('removes by id', function (done) {
-      Contact.remove({ id: 3 }, function (err) {
+      Contact.remove({ _id: savedContacts[2].id }, function (err) {
         Contact.find({}, function (err, allContacts) {
           expect(allContacts.length).to.equal(4);
           var ids = allContacts.map((contact) => contact.id);
           expect(ids).to.not.contain(savedContacts[2].id);
 
-          Contact.remove({ id: 1 }, function (err) {
+          Contact.remove({ _id: savedContacts[0].id }, function (err) {
             Contact.find({}, function (err, allContacts) {
               expect(allContacts.length).to.equal(3);
               var ids = allContacts.map((contact) => contact.id);
